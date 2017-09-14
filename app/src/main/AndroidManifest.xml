@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.hipdrobe.hip_v1_1">
+
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,25 +13,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.hipdrobe.hip_v1_1.MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service
-            android:name="com.example.hipdrobe.hip_v1_1.AlwaysOnTop"
+            android:name=".AlwaysOnTop"
             android:enabled="true"
             android:exported="true" />
 
         <fragment android:name=".MediaProjectionActivity" />
 
-        <activity android:name="com.example.hipdrobe.hip_v1_1.Drobe" />
-        <activity android:name="com.example.hipdrobe.hip_v1_1.Screenshot"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
-        </activity>
+        <activity android:name=".Drobe" />
+        <activity
+            android:name=".Screenshot"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity android:name=".Drobe_ImageActivity" />
+        <activity android:name=".Drobe_CropAndFilter" />
+        <activity android:name=".ResultActivity"></activity>
     </application>
 
 </manifest>

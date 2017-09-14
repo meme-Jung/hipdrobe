@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.hipdrobe.hip_v1_1.Drobe_CropAndFilter">
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:weightSum="1">
+        <com.naver.android.helloyako.imagecrop.view.ImageCropView
+            xmlns:imagecrop="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            imagecrop:setInnerGridMode="on"
+            imagecrop:gridInnerStroke="1dp"
+            imagecrop:gridInnerColor="#66ffffff"
+            imagecrop:setOuterGridMode="on"
+            imagecrop:gridOuterStroke="1dp"
+            imagecrop:gridOuterColor="#ffffff"/>
+            <Spinner
+                android:id="@+id/category"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical|bottom"
+                android:layout_marginBottom="80dp"
+                android:background="#ffffcad5">
+            </Spinner>
+            <Spinner
+            android:id="@+id/price"
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:background="#ffffcad5"
+                android:layout_gravity="center_vertical|bottom"
+                android:layout_marginBottom="50dp">
+             </Spinner>
+        <Button
+            android:id="@+id/complete"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#ffffcad5"
+            android:text="Complete!"
+            android:layout_gravity="center_vertical|bottom" />
+
+
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>
