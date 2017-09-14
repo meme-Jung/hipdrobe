@@ -27,12 +27,14 @@ public class Drobe extends Activity {
         STORE_DIRECTORY_thumb = externalFilesDir.getAbsolutePath() + "/thumbnails/";
         file = new File(STORE_DIRECTORY_thumb);
         File list[] = file.listFiles();
-        for (int i = 0; i < list.length; i++) {
-            imgList.add(STORE_DIRECTORY_thumb+list[i].getName());
+        if(list!=null) {
+            for (int i = 0; i < list.length; i++) {
+                imgList.add(STORE_DIRECTORY_thumb + list[i].getName());
+            }
+            gridView = (GridView) findViewById(R.id.ImgGridView);
+            DrobeAdapter DrobeAdapter = new DrobeAdapter(this, imgList);
+            gridView.setAdapter(DrobeAdapter);
         }
-        gridView = (GridView) findViewById(R.id.ImgGridView);
-        DrobeAdapter DrobeAdapter = new DrobeAdapter(this, imgList);
-        gridView.setAdapter(DrobeAdapter);
     }
 }
 
