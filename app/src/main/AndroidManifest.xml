@@ -38,9 +38,15 @@
             android:taskAffinity=""
             android:excludeFromRecents="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity android:name=".Drobe_ImageActivity" />
-        <activity android:name=".Drobe_CropAndFilter" />
-        <activity android:name=".ResultActivity"></activity>
+        <activity android:name=".Drobe_ImageActivity"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"/>
+        <activity android:name=".Drobe_CropAndFilter"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"/>
+        <activity android:name=".ResultActivity"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"></activity>
     </application>
 
 </manifest>

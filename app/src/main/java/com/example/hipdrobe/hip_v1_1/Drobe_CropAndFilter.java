@@ -1,6 +1,7 @@
 package com.example.hipdrobe.hip_v1_1;
 
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,10 +27,13 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 public class Drobe_CropAndFilter extends AppCompatActivity {
 
+    private File file;
+    private String STORE_DIRECTORY_thumb;
     private ImageCropView imageView;
     private List imgList = new ArrayList();
     private int position;
@@ -38,10 +42,34 @@ public class Drobe_CropAndFilter extends AppCompatActivity {
     private static final int REQUEST_SELECT_PICTURE = 0x01;
     private Uri mDestinationUri;
     private String imageURI;
+    static int state = 0;
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        state=1;
+        Context mContext = getApplicationContext();
+        ActivityManager activityManager = (ActivityManager) mContext.getSystemService(mContext.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> info;
+        info = activityManager.getRunningTasks(1);
+        String top;
+        Iterator iterator = info.iterator();
+        ActivityManager.RunningTaskInfo runningTaskInfo = (ActivityManager.RunningTaskInfo) iterator.next();
+        top = runningTaskInfo.topActivity.getClassName();
+        if (!top.contains("hipdrobe")) {
+            finish();
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        state=2;
+        super.onDestroy();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        state = 0;
         setContentView(R.layout.activity_drobe__crop_and_filter);
         //Spinner
         final String [] category_ = {"Outerwear/Vest","Jacket/Blazer","Cardigan",
@@ -84,13 +112,24 @@ public class Drobe_CropAndFilter extends AppCompatActivity {
         });
         imageView = (ImageCropView) findViewById(R.id.image);
         Intent receivedIntent = getIntent();
-        imgList = receivedIntent.getParcelableArrayListExtra("imglist");
         position = (int) receivedIntent.getExtras().get("position");
-        imageURI = (String) imgList.get(position);
+
+        if(position == -1){
+            imgList = new ArrayList();
+            File externalFilesDir = getExternalFilesDir(null);
+            STORE_DIRECTORY_thumb = externalFilesDir.getAbsolutePath() + "/thumbnails/";
+            file = new File(STORE_DIRECTORY_thumb);
+            File list[] = file.listFiles();
+            imageURI = STORE_DIRECTORY_thumb +  list[list.length-1].getName();
+        }
+        else {
+            imgList = receivedIntent.getParcelableArrayListExtra("imglist");
+            imageURI = (String) imgList.get(position);
+        }
         imageURI = imageURI.replace("thumbnails", "screenshots");
         mDestinationUri = Uri.fromFile(new File(getCacheDir(), SAMPLE_CROPPED_IMAGE_NAME));
         imageView.setImageFilePath(imageURI);
-        imageView.setAspectRatio(1,1);
+        imageView.setAspectRatio(1, 1);
         findViewById(R.id.complete).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

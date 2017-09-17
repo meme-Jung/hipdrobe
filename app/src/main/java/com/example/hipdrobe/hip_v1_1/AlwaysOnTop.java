@@ -48,6 +48,9 @@ public class AlwaysOnTop extends Service {
     private Timer mTimer;
     private TimerTask mTask2;
     private Timer mTimer2;
+    private int SaveOrSearch=0;
+    private TimerTask second;
+    private Handler mhandler = new Handler();
 
     @Nullable
     @Override
@@ -259,42 +262,100 @@ public class AlwaysOnTop extends Service {
                 case MotionEvent.ACTION_UP:
                     long ClickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
                     if (ClickDuration < MAX_CLICK_DURATION) {
-
-                        //버튼 없애기
-                        mPopupView_d.setVisibility(View.GONE);
-                        mPopupView_s.setVisibility(View.GONE);
-                        mPopupView_x.setVisibility(View.GONE);
-                        mTimer2 = new Timer();
-                        final Handler handler2 = new Handler()
-                        {
-                            public void handleMessage(Message msg)
-                            {
-                                Log.i("imdoing","handler" + toString().valueOf(Drobe.state));
-                                if(Screenshot.state==1){
-                                    mPopupView_d.setVisibility(View.VISIBLE);
-                                    mPopupView_s.setVisibility(View.VISIBLE);
-                                    mPopupView_x.setVisibility(View.VISIBLE);
-                                    if (mTimer2 != null) {
-                                        mTimer2.cancel();
+                        if(SaveOrSearch==0) { // Save button 이면
+                            mPopupView_s.setImageResource(R.drawable.search); //이미지 바꾸고
+                            SaveOrSearch = 1;
+                            //버튼 없애기
+                            mPopupView_d.setVisibility(View.GONE);
+                            mPopupView_s.setVisibility(View.GONE);
+                            mPopupView_x.setVisibility(View.GONE);
+                            mTimer2 = new Timer();
+                            final Handler handler2 = new Handler() {
+                                public void handleMessage(Message msg) {
+                                    Log.i("imdoing", "handler" + toString().valueOf(Drobe.state));
+                                    if (Screenshot.state == 1) {
+                                        mPopupView_d.setVisibility(View.VISIBLE);
+                                        mPopupView_s.setVisibility(View.VISIBLE);
+                                        mPopupView_x.setVisibility(View.VISIBLE);
+                                        if (mTimer2 != null) {
+                                            mTimer2.cancel();
+                                        }
                                     }
                                 }
-                            }
-                        };
-                        mTask2 = new TimerTask() {  //UIthread에 접근하기 위해 핸들러 사용
-                            @Override
-                            public void run() {
-                                new Thread()
-                                {
-                                    public void run()
-                                    {
-                                        Message msg = handler2.obtainMessage();
-                                        handler2.sendMessage(msg);
+                            };
+                            mTask2 = new TimerTask() {  //UIthread에 접근하기 위해 핸들러 사용
+                                @Override
+                                public void run() {
+                                    new Thread() {
+                                        public void run() {
+                                            Message msg = handler2.obtainMessage();
+                                            handler2.sendMessage(msg);
+                                        }
+                                    }.start();
+                                }
+                            };
+                            mTimer2.schedule(mTask2, 100, 500);
+                            startActivity(new Intent(AlwaysOnTop.this, Screenshot.class));
+                            SearchToSave();
+                        }
+                        else{
+                            //버튼 없애기
+                            mPopupView_d.setVisibility(View.GONE);
+                            mPopupView_s.setVisibility(View.GONE);
+                            mPopupView_x.setVisibility(View.GONE);
+                            mTimer2 = new Timer();
+                            final Handler handler2 = new Handler() {
+                                public void handleMessage(Message msg) {
+                                    if(Drobe_CropAndFilter.state == 0){
+                                        mPopupView_d.setVisibility(View.GONE);
+                                        mPopupView_s.setVisibility(View.GONE);
+                                        mPopupView_x.setVisibility(View.GONE);
                                     }
-                                }.start();
-                            }
-                        };
-                        mTimer2.schedule(mTask2, 100, 500);
-                        startActivity(new Intent(AlwaysOnTop.this, Screenshot.class));
+                                    if (Drobe_CropAndFilter.state == 1) {
+                                        Context mContext = getApplicationContext();
+                                        ActivityManager activityManager = (ActivityManager) mContext.getSystemService(mContext.ACTIVITY_SERVICE);
+                                        List<ActivityManager.RunningTaskInfo> info;
+                                        info = activityManager.getRunningTasks(1);
+                                        String top;
+                                        Iterator iterator = info.iterator();
+                                        ActivityManager.RunningTaskInfo runningTaskInfo = (ActivityManager.RunningTaskInfo) iterator.next();
+                                        top = runningTaskInfo.topActivity.getClassName();
+                                        Log.i("alwaysontop",top);
+                                        if (!top.contains("hipdrobe")) {
+                                            mPopupView_d.setVisibility(View.VISIBLE);
+                                            mPopupView_s.setVisibility(View.VISIBLE);
+                                            mPopupView_x.setVisibility(View.VISIBLE);
+                                            if (mTimer2 != null) {
+                                                mTimer2.cancel();
+                                            }
+                                        }
+                                    }
+                                    else if(Drobe_CropAndFilter.state==2){
+                                        mPopupView_d.setVisibility(View.VISIBLE);
+                                        mPopupView_s.setVisibility(View.VISIBLE);
+                                        mPopupView_x.setVisibility(View.VISIBLE);
+                                        if (mTimer2 != null) {
+                                            mTimer2.cancel();
+                                        }
+                                    }
+                                }
+                            };
+                            mTask2 = new TimerTask() {  //UIthread에 접근하기 위해 핸들러 사용
+                                @Override
+                                public void run() {
+                                    new Thread() {
+                                        public void run() {
+                                            Message msg = handler2.obtainMessage();
+                                            handler2.sendMessage(msg);
+                                        }
+                                    }.start();
+                                }
+                            };
+                            mTimer2.schedule(mTask2, 100, 500);
+                            Intent intent = new Intent(AlwaysOnTop.this, Drobe_CropAndFilter.class);
+                            intent.putExtra("position",-1);
+                            startActivity(intent);
+                        }
                     }
                 case MotionEvent.ACTION_DOWN:
                     startClickTime = Calendar.getInstance().getTimeInMillis();
@@ -353,5 +414,21 @@ public class AlwaysOnTop extends Service {
         if(mParams.y > MAX_Y) mParams.y = MAX_Y;
         if(mParams.x < 0) mParams.x = 0;
         if(mParams.y < 0) mParams.y = 0;
+    }
+    public void SearchToSave() {
+        second = new TimerTask() {
+            @Override
+            public void run() {
+                Runnable updater = new Runnable() {
+                    public void run() {
+                        mPopupView_s.setImageResource(R.drawable.icon_s );
+                        SaveOrSearch=0;
+                    }
+                };
+                mhandler.post(updater);
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(second, 5000);
     }
 }
