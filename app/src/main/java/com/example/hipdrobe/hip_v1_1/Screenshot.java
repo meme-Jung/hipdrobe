@@ -57,6 +57,7 @@ public class Screenshot extends Activity {
     private Bitmap bitmap;
     private int mWidth;
     private int mHeight;
+    static int state = 0;
     private int mRotation;
     private OrientationChangeCallback mOrientationChangeCallback;
 
@@ -88,6 +89,7 @@ public class Screenshot extends Activity {
                     fos[0] = new FileOutputStream(STORE_DIRECTORY + "/HIPDROBE_" + dateString + ".png");
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos[0]);
                     createThumbnail(bitmap,STORE_DIRECTORY_thumb,"/HIPDROBE_" + dateString + ".png");
+                    state =1;
                     finish();
                     sMediaProjection.stop();
                     Log.e(TAG, "captured image: " + IMAGES_PRODUCED);
@@ -157,6 +159,7 @@ public class Screenshot extends Activity {
         Log.i("brrrr","onCreate");
         this.overridePendingTransition(0,0);
         super.onCreate(savedInstanceState);
+        state=0;
         setContentView(R.layout.activity_screenshot);
 
         // call for the projection manager
@@ -210,7 +213,12 @@ public class Screenshot extends Activity {
                 // register media projection stop callback
                 sMediaProjection.registerCallback(new MediaProjectionStopCallback(), mHandler);
             }
+        }if (resultCode != RESULT_OK) {
+            finish();
+            state =1;
+            return;
         }
+
     }
 
     /****************************************** UI Widget Callbacks *******************************/
@@ -258,5 +266,6 @@ public class Screenshot extends Activity {
                 e.printStackTrace();
             }
         }
+
     }
 }
