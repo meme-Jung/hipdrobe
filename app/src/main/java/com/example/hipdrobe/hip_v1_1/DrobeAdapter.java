@@ -73,6 +73,7 @@ public class DrobeAdapter extends BaseAdapter{
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AlwaysOnTop.Activity_Stack="EF";
                 Intent intent = new Intent(context, Drobe_ImageActivity.class);
                 intent.putParcelableArrayListExtra("imglist", (ArrayList<? extends Parcelable>) imgList);
                 intent.putExtra("position",position);

@@ -37,7 +37,9 @@ public class AlwaysOnTop extends Service {
     private ImageView mPopupView_x;
     private ImageView mPopupView_d;
     private ImageView mPopupView_s;
-    private WindowManager.LayoutParams mParams, mParams_d,mParams_s;
+    private ImageView mPopupView_close;
+    static String Activity_Stack;
+    private WindowManager.LayoutParams mParams, mParams_d,mParams_s, mParams_close;
     private WindowManager mWindowManager;
     private float START_X, START_Y,START_X_s, START_Y_s,START_X_d, START_Y_d;
     private int PREV_X, PREV_Y,PREV_X_s, PREV_Y_s,PREV_X_d, PREV_Y_d;
@@ -51,11 +53,19 @@ public class AlwaysOnTop extends Service {
     private int SaveOrSearch=0;
     private TimerTask second;
     private Handler mhandler = new Handler();
+    private int id;
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent i, int flags, int startID)
+    {
+        id = startID;
+        return flags;
     }
     @Override
     public void onCreate() {
@@ -80,19 +90,29 @@ public class AlwaysOnTop extends Service {
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_UP:
+                    Log.i("loggggg", "actionup");
                     long ClickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
-                    if (ClickDuration < MAX_CLICK_DURATION) {
-                        String folder = "HIP";
-                        File dirs = new File(Environment.getExternalStorageDirectory(), folder);
-                        if (!dirs.exists()) { // 원하는 경로에 폴더가 있는지 확인
-                            dirs.mkdirs(); // Test 폴더 생성
-                            Log.d("CAMERA_TEST", "Directory Created");
-                        }
+                    DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
+                    int width = dm.widthPixels;
+                    int height = dm.heightPixels;
+                    mWindowManager.removeViewImmediate(mPopupView_close);/*
+                    Log.i("exit", String.valueOf(mParams.x));
+                    Log.i("exit", String.valueOf(mParams.y));
+                    Log.i("exit", String.valueOf(width));
+                    Log.i("exit", String.valueOf(height));*/
+                    if(mParams.x < width/2 + 150 && mParams.x > width/2 - 150 && mParams.y > height - 300){
+                        Log.i("exit", "stop : " + id);
+                        mWindowManager.removeViewImmediate(mPopupView_h);
+                        stopSelf();
+                    }
+                    else if (ClickDuration < MAX_CLICK_DURATION) {
                         Log.i("loggggg", "H버튼 없애고 X,d,s버튼 만들기");
                         mWindowManager.removeViewImmediate(mPopupView_h);
                         make_three_buttons();
                     }
+                    break;
                 case MotionEvent.ACTION_DOWN:
+                    Log.i("loggggg", "actiondown");
                     startClickTime = Calendar.getInstance().getTimeInMillis();
                     if (MAX_X == -1)
                         setMaxPosition();
@@ -100,6 +120,19 @@ public class AlwaysOnTop extends Service {
                     START_Y = event.getRawY();
                     PREV_X = mParams.x;
                     PREV_Y = mParams.y;
+
+                    // 종료 버튼
+                    mPopupView_close = new ImageView(AlwaysOnTop.this);
+                    mPopupView_close.setImageResource(R.drawable.icon_x);
+                    mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+                    mParams_close = new WindowManager.LayoutParams(
+                            WindowManager.LayoutParams.WRAP_CONTENT,
+                            WindowManager.LayoutParams.WRAP_CONTENT,
+                            WindowManager.LayoutParams.TYPE_PHONE,
+                            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                            PixelFormat.TRANSLUCENT);
+                    mParams_close.gravity = Gravity.CENTER | Gravity.BOTTOM;
+                    mWindowManager.addView(mPopupView_close, mParams_close);
                     break;
                 case MotionEvent.ACTION_MOVE:
                     int x = (int) (event.getRawX() - START_X);
@@ -122,12 +155,6 @@ public class AlwaysOnTop extends Service {
                 case MotionEvent.ACTION_UP:
                     long ClickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
                     if (ClickDuration < MAX_CLICK_DURATION) {
-                        String folder = "HIP";
-                        File dirs = new File(Environment.getExternalStorageDirectory(), folder);
-                        if (!dirs.exists()) { // 원하는 경로에 폴더가 있는지 확인
-                            dirs.mkdirs(); // Test 폴더 생성
-                            Log.d("CAMERA_TEST", "Directory Created");
-                        }
                         Log.i("loggggg", "X버튼 없애고 H버튼 만들기");
                         mWindowManager.removeViewImmediate(mPopupView_x);
                         mWindowManager.removeViewImmediate(mPopupView_s);
@@ -213,7 +240,7 @@ public class AlwaysOnTop extends Service {
                                     Iterator iterator = info.iterator();
                                     ActivityManager.RunningTaskInfo runningTaskInfo = (ActivityManager.RunningTaskInfo) iterator.next();
                                     top = runningTaskInfo.topActivity.getClassName();
-                                    Log.i("alwaysontop",top);
+                                    Log.i("drobe!?",top);
                                     if (!top.contains("hipdrobe")) {
                                         mPopupView_d.setVisibility(View.VISIBLE);
                                         mPopupView_s.setVisibility(View.VISIBLE);
@@ -247,7 +274,10 @@ public class AlwaysOnTop extends Service {
                             }
                         };
                         mTimer.schedule(mTask, 100, 500);
-                        startActivity(new Intent(AlwaysOnTop.this, Drobe.class));
+                        Intent intent = new Intent(AlwaysOnTop.this, Drobe.class);
+                        intent.putExtra("from","AlwaysOnTop");
+                        Activity_Stack = "E";
+                        startActivity(intent);
                     }
                 case MotionEvent.ACTION_DOWN:
                     startClickTime = Calendar.getInstance().getTimeInMillis();

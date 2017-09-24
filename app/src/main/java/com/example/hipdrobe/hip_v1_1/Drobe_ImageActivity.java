@@ -1,10 +1,15 @@
 package com.example.hipdrobe.hip_v1_1;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Parcelable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,7 +20,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class Drobe_ImageActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
     private static final int SWIPE_MIN_DISTANCE = 120;
@@ -26,24 +33,32 @@ public class Drobe_ImageActivity extends AppCompatActivity implements GestureDet
     private List imgList = new ArrayList();
     private Button button;
     private int position;
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("Activity_Stack",AlwaysOnTop.Activity_Stack);
         setContentView(R.layout.activity_drobe__image);
-        gestureScanner = new GestureDetector(this);
-        imageView = (ImageView)findViewById(R.id.imageView);
+        if(Objects.equals(AlwaysOnTop.Activity_Stack, "EF")) {
+            gestureScanner = new GestureDetector(this);
+            imageView = (ImageView) findViewById(R.id.imageView);
 
-        button = (Button) findViewById(R.id.hipit);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Drobe_ImageActivity.this, Drobe_CropAndFilter.class);
-                intent.putParcelableArrayListExtra("imglist", (ArrayList<? extends Parcelable>) imgList);
-                intent.putExtra("position",position);
-                startActivity(intent);
-            }
-        });
-        setImage(imageView);
+            button = (Button) findViewById(R.id.hipit);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlwaysOnTop.Activity_Stack = "EFG";
+                    Intent intent = new Intent(Drobe_ImageActivity.this, Drobe_CropAndFilter.class);
+                    intent.putParcelableArrayListExtra("imglist", (ArrayList<? extends Parcelable>) imgList);
+                    intent.putExtra("position", position);
+                    startActivity(intent);
+                }
+            });
+            setImage(imageView);
+        }
+        else{
+            finish();
+        }
     }
     private void setImage(ImageView imageView) {
         //----------------------------------------------------------------
@@ -74,7 +89,6 @@ public class Drobe_ImageActivity extends AppCompatActivity implements GestureDet
     public void onShowPress(MotionEvent e) {
 
     }
-
     @Override
     public boolean onSingleTapUp(MotionEvent e) {/*
          Toast.makeText(getApplicationContext(), "onSingleTapUp", Toast.LENGTH_SHORT).show();
@@ -126,5 +140,28 @@ public class Drobe_ImageActivity extends AppCompatActivity implements GestureDet
         }
         return true;
     }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Context mContext = getApplicationContext();
+        ActivityManager activityManager = (ActivityManager) mContext.getSystemService(mContext.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> info;
+        info = activityManager.getRunningTasks(1);
+        String top;
+        Iterator iterator = info.iterator();
+        ActivityManager.RunningTaskInfo runningTaskInfo = (ActivityManager.RunningTaskInfo) iterator.next();
+        top = runningTaskInfo.topActivity.getClassName();
+        Log.i("drobe!?",top);
+        if (!top.contains("hipdrobe")) {
+            finish();
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        AlwaysOnTop.Activity_Stack = AlwaysOnTop.Activity_Stack.replace("F","");
+        Log.i("Activity_Stack",AlwaysOnTop.Activity_Stack);
+        super.onDestroy();
+    }
+
 }
 
