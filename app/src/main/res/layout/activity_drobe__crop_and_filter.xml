@@ -5,46 +5,76 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.hipdrobe.hip_v1_1.Drobe_CropAndFilter">
-    <FrameLayout
+    <com.naver.android.helloyako.imagecrop.view.ImageCropView
+        xmlns:imagecrop="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/image"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:weightSum="1">
-        <com.naver.android.helloyako.imagecrop.view.ImageCropView
-            xmlns:imagecrop="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/image"
+        android:visibility="visible"
+        imagecrop:setInnerGridMode="on"
+        imagecrop:gridInnerStroke="1dp"
+        imagecrop:gridInnerColor="#66ffffff"
+        imagecrop:setOuterGridMode="on"
+        imagecrop:gridOuterStroke="1dp"
+        imagecrop:gridOuterColor="#ffffff"
+        tools:layout_editor_absoluteY="8dp"
+        tools:layout_editor_absoluteX="8dp" />
+    <FrameLayout
+        android:id="@+id/layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible"
-            imagecrop:setInnerGridMode="on"
-            imagecrop:gridInnerStroke="1dp"
-            imagecrop:gridInnerColor="#66ffffff"
-            imagecrop:setOuterGridMode="on"
-            imagecrop:gridOuterStroke="1dp"
-            imagecrop:gridOuterColor="#ffffff"/>
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:baselineAligned="false">
             <Spinner
+                android:layout_weight="1"
                 android:id="@+id/category"
-                android:layout_width="fill_parent"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical|bottom"
-                android:layout_marginBottom="80dp"
-                android:background="#ffffcad5">
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="50dp"
+                android:background="#FFFFFF">
             </Spinner>
-            <Spinner
-            android:id="@+id/price"
-            android:layout_width="fill_parent"
-            android:layout_height="30dp"
-            android:background="#ffffcad5"
-                android:layout_gravity="center_vertical|bottom"
+            <FrameLayout
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="bottom"
+                android:background="#FFFFFF"
                 android:layout_marginBottom="50dp">
-             </Spinner>
+                <TextView
+                    android:id="@+id/mintxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="left"
+                    android:text="min"/>
+                <TextView
+                    android:id="@+id/maxtxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="right"
+                    android:text="max"/>
+                <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
+                    android:id="@+id/price"
+                    android:layout_width="match_parent"
+                    app:left_thumb_image="@drawable/seek"
+                    app:right_thumb_image="@drawable/seek"
+                    android:layout_height="30dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="15dp"
+                    android:background="#FFFFFF">
+                </com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar>
+            </FrameLayout>
+        </LinearLayout>
         <Button
             android:id="@+id/complete"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="#ffffcad5"
+            android:background="#FFFFFF"
             android:text="Complete!"
             android:layout_gravity="center_vertical|bottom" />
-
-
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>

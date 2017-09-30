@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
 import android.media.Image;
@@ -67,6 +68,52 @@ public class Screenshot extends Activity {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onImageAvailable(final ImageReader reader) {
+            //// 시작하자마자 Thumbnails와 ScreenShot 폴더 없으면 만들고,  sample이미지 각각 저장하기. "000000000.jpg"
+            File externalFilesDir = getExternalFilesDir(null);
+            STORE_DIRECTORY = externalFilesDir.getAbsolutePath() + "/screenshots/";
+            File storeDirectory2 = new File(STORE_DIRECTORY + "/HIPDROBE_" + "00000000000000" + ".png");
+            File storeDirectory = new File(STORE_DIRECTORY);
+            if (!storeDirectory.exists()) {
+                storeDirectory.mkdirs();
+            }
+            if(!storeDirectory2.isFile()){
+                Bitmap bitmap;
+                BitmapDrawable drawable = (BitmapDrawable) getResources().getDrawable(R.drawable.sampleimg1);
+                bitmap = drawable.getBitmap();
+                final FileOutputStream[] fos = new FileOutputStream[1];
+                try {
+                    fos[0] = new FileOutputStream(STORE_DIRECTORY + "/HIPDROBE_" + "00000000000000" + ".png");
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos[0]);
+                createThumbnail(bitmap,STORE_DIRECTORY_thumb,"/HIPDROBE_" + "00000000000000" + ".png");
+
+                Bitmap bitmap2;
+                BitmapDrawable drawable2 = (BitmapDrawable) getResources().getDrawable(R.drawable.sampleimg2);
+                bitmap2 = drawable2.getBitmap();
+                final FileOutputStream[] fos2 = new FileOutputStream[1];
+                try {
+                    fos2[0] = new FileOutputStream(STORE_DIRECTORY + "/HIPDROBE_" + "11111111111111" + ".png");
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                bitmap2.compress(Bitmap.CompressFormat.JPEG, 100, fos2[0]);
+                createThumbnail(bitmap2,STORE_DIRECTORY_thumb,"/HIPDROBE_" + "11111111111111" + ".png");
+
+                Bitmap bitmap3;
+                BitmapDrawable drawable3 = (BitmapDrawable) getResources().getDrawable(R.drawable.sampleimg3);
+                bitmap3 = drawable3.getBitmap();
+                final FileOutputStream[] fos3 = new FileOutputStream[1];
+                try {
+                    fos3[0] = new FileOutputStream(STORE_DIRECTORY + "/HIPDROBE_" + "22222222222222" + ".png");
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                bitmap3.compress(Bitmap.CompressFormat.JPEG, 100, fos3[0]);
+                createThumbnail(bitmap3,STORE_DIRECTORY_thumb,"/HIPDROBE_" + "22222222222222" + ".png");
+            }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             Log.i("brrrr","ImageAvailableListner");
             Image image = null;
             final FileOutputStream[] fos = new FileOutputStream[1];

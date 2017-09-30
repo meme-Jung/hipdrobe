@@ -1,5 +1,7 @@
 package com.example.hipdrobe.hip_v1_1;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,6 +33,7 @@ public class Drobe_ImageActivity extends AppCompatActivity implements GestureDet
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
     private GestureDetector gestureScanner;
     private ImageView imageView;
+    public static Activity ImageAct;
     private List imgList = new ArrayList();
     private Button button;
     private int position;
@@ -37,12 +41,12 @@ public class Drobe_ImageActivity extends AppCompatActivity implements GestureDet
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ImageAct = this;
         Log.i("Activity_Stack",AlwaysOnTop.Activity_Stack);
         setContentView(R.layout.activity_drobe__image);
         if(Objects.equals(AlwaysOnTop.Activity_Stack, "EF")) {
             gestureScanner = new GestureDetector(this);
             imageView = (ImageView) findViewById(R.id.imageView);
-
             button = (Button) findViewById(R.id.hipit);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -153,6 +157,7 @@ public class Drobe_ImageActivity extends AppCompatActivity implements GestureDet
         top = runningTaskInfo.topActivity.getClassName();
         Log.i("drobe!?",top);
         if (!top.contains("hipdrobe")) {
+            Drobe.DrobeAct.finish();
             finish();
         }
     }
